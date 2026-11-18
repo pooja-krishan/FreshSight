@@ -6,12 +6,12 @@ An end-to-end computer vision and MLOps system designed to solve fine-grained ob
 
 ---
 
-## 📌 Problem Statement
+## Problem Statement
 Standard object detectors easily recognize generic "cups" but struggle with **intra-class fine-grained classification**—especially when brand identifiers (logos, colors, textures) are partially occluded, stacked in towers, camouflaged against matching backgrounds, or surrounded by visual lookalikes (e.g., red solo cups, red-and-white packaging, cylindrical bottles).
 
 ---
 
-## 🏛️ End-to-End Architecture
+## End-to-End Architecture
 
 ```mermaid
 flowchart LR
@@ -40,7 +40,7 @@ flowchart LR
 
 ---
 
-## 🛠️ Tech Stack Overview
+## Tech Stack Overview
 
 | Pipeline Stage | Tools & Technologies | Key Implementation Details |
 | :--- | :--- | :--- |
@@ -52,7 +52,7 @@ flowchart LR
 
 ---
 
-## 🔄 Iterative Engineering Workflow
+## Iterative Engineering Workflow
 
 ### 1. Data-Centric Iteration & Statistical Audit (v1 → v3)
 * **Combinatorial Data Collection:** Designed a stratified collection matrix covering background brightness, occlusion types (hand, vertical, horizontal), orientation (upright vs. toppled), camera distance, and viewing angles.
@@ -78,7 +78,7 @@ We ran **Grad-CAM** and **Saliency Map** error analyses on validation false posi
 
 ---
 
-## 📊 Evaluation Results
+## Evaluation Results
 
 ### Phase 1: Initial Controlled Test Set (100 Multi-Object Images)
 
@@ -102,17 +102,26 @@ We ran **Grad-CAM** and **Saliency Map** error analyses on validation false posi
 
 | Embedding Space & Bias Discovery (`FiftyOne` + `UMAP`) | Model Explainability (`Grad-CAM` Heatmaps) |
 | :---: | :---: |
-| ![UMAP Embedding Clusters](umap/) | ![Grad-CAM Overlays](gradcam/) |
-| *CLIP + UMAP projection used to identify pose, background, and class imbalances across dataset versions.* | *Class-activation heatmaps confirming brand-logo localization and diagnosing stacked/CGI edge cases.* |
+| ![UMAP Embedding Clusters](umap/umap.png) | [![Grad-CAM Overlays](gradcam/compare_image_20.jpg)](gradcam/) |
+| *CLIP + UMAP projection used to identify pose, background, and class imbalances across dataset versions.* | *Class-activation heatmaps confirming brand-logo localization.<br>[📂 **Browse all Grad-CAM heatmaps →**](gradcam/)* |
 
 | Live Operational Telemetry (`Prometheus` + `Grafana`) | Statistical Drift & Ground-Truth Report (`Evidently AI`) |
 | :---: | :---: |
-| ![Grafana Dashboard](assets/grafana_dashboard.png) | ![Evidently AI Drift Report](evidently) |
+| ![Grafana Dashboard](assets/grafana_dashboard.png) | ![Evidently AI Drift Report](evidently/drift-report-1.png) |
 | *Real-time API health, RPM throughput, and p50/max latency (~114ms median) via custom OpenMetrics adapter.* | *K-S & Z-test drift detection flagging confidence shifts (`0.92 -> 0.85`) and tracking ground-truth accuracy.* |
 
 ---
 
-## 🚀 Inference API & Two-Layer Monitoring Architecture
+### Confusion Matrix Progression (Experiments 1 → 3)
+
+| Experiment 1 (Baseline) | Experiment 2 (`Optuna` HPO) | Experiment 3 (`Grad-CAM` Augs + Label Fixes) |
+| :---: | :---: | :---: |
+| ![Experiment 1 Confusion Matrix](<assets/exp1.png>) | ![Experiment 2 Confusion Matrix](assets/exp2.png) | ![Experiment 3 Confusion Matrix](assets/exp3.png) |
+| *Baseline `YOLOv8s` showing higher background false positives (`45` total) from unlabeled small cups.* | *`Optuna` tuning improves precision slightly, while exposing background misclassifications.* | *Targeted augmentations and small-cup labeling cut background false positives down to `16`.* |
+
+---
+
+## Inference API & Two-Layer Monitoring Architecture
 
 The production inference service is built with **FastAPI** and instrumented with both **real-time operational telemetry** and **batch statistical drift detection**:
 

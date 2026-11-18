@@ -1,4 +1,4 @@
-# Is It Always Fresh? — FreshSight: Fine-Grained Brand Object Detection & MLOps Pipeline
+# Is It Always Fresh? FreshSight: Fine-Grained Brand Object Detection & MLOps Pipeline
 
 An end-to-end computer vision and MLOps system designed to solve fine-grained object detection: distinguishing **Tim Hortons cups** (`timmies`) from visually similar generic cups and mugs (`cup`) in cluttered, real-world environments.
 
